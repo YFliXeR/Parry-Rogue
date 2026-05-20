@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://dbwejiolhlhw6"]
+
+[ext_resource type="Script" uid="uid://dn8tttojf1m4v" path="res://scenes/map/MapScreen.gd" id="1_qnidf"]
+
+[node name="MapScreen" type="Node2D" unique_id=408377512]
+script = ExtResource("1_qnidf")

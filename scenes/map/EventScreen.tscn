@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://bkoyswolknbkw"]
+
+[ext_resource type="Script" uid="uid://d18l7jgutkuhy" path="res://scenes/map/EventScreen.gd" id="1_f3bch"]
+
+[node name="EventScreen" type="Node2D" unique_id=1623843907]
+script = ExtResource("1_f3bch")
