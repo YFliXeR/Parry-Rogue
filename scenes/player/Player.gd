@@ -1,7 +1,12 @@
 # Player.gd
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # Manages player HP, damage handling, visual feedback,
-# and parry input detection.
+# WASD movement, and parry input detection.
+#
+# Movement is processed every frame via _process().
+# Parry input is gated by _accepting_input — only active
+# when ParrySystem opens a window.
+#
 # Does NOT evaluate whether a parry succeeds — that is
 # ParrySystem.gd's job. This script only reports what
 # the player pressed and when.
@@ -10,33 +15,81 @@
 extends Node2D
 
 
-# ── Signals ──────────────────────────────────────────────
-signal direction_pressed(dir: String)   # emitted when player presses a direction key
-signal confirm_pressed                  # emitted when player presses Spacebar
+# ── Signals ───────────────────────────────────────────────
+signal direction_pressed(dir: String)   # emitted when player presses a direction key during parry window
+signal confirm_pressed                  # emitted when player presses Spacebar during parry window
 signal player_died                      # emitted when HP reaches zero
-signal hp_changed(current: float)   # fires whenever HP changes
+signal hp_changed(current: float)       # fires whenever HP changes
 
 
 # ── State ─────────────────────────────────────────────────
-var current_hp    : float = GameConstants.PLAYER_MAX_HP
-var is_dead       : bool  = false
-var _accepting_input : bool = false   # only true during an active parry window
+var current_hp       : float = GameConstants.PLAYER_MAX_HP
+var is_dead          : bool  = false
+var _accepting_input : bool  = false   # true only during an active parry window
 
 
 # ── Node References ───────────────────────────────────────
 @onready var _visual : ColorRect = $Visual   # the blue rectangle
 
 
+# ── Lifecycle ─────────────────────────────────────────────
+func _ready() -> void:
+	# Restore HP from BuildManager so damage carries between fights
+	current_hp = BuildManager.current_hp
+	_visual.position = -_visual.size / 2.0
+
+func _process(delta: float) -> void:
+	if is_dead:
+		return
+	_handle_movement(delta)
+
+
+# ── Movement ──────────────────────────────────────────────
+
+## Reads WASD each frame and moves the player, clamped to arena bounds.
+## Accounts for visual size so the rect edges, not the origin, stop at the boundary.
+func _handle_movement(delta: float) -> void:
+	var dir := Vector2.ZERO
+
+	if Input.is_action_pressed("move_left"):
+		dir.x -= 1.0
+	if Input.is_action_pressed("move_right"):
+		dir.x += 1.0
+	if Input.is_action_pressed("move_up"):
+		dir.y -= 1.0
+	if Input.is_action_pressed("move_down"):
+		dir.y += 1.0
+
+	if dir.length_squared() > 0.0:
+		dir = dir.normalized()
+
+	global_position += dir * GameConstants.PLAYER_MOVE_SPEED * delta
+
+	# Clamp so the VISUAL RECT edges stay inside bounds, not just the origin.
+	# ColorRect origin is top-left, so we subtract the full size on the far edges.
+	var b  := GameConstants.ARENA_BOUNDS
+	var half_size = _visual.size / 2.0
+
+	global_position.x = clamp(
+		global_position.x,
+		b.position.x + half_size.x,
+		b.position.x + b.size.x - half_size.x
+	)
+
+	global_position.y = clamp(
+		global_position.y,
+		b.position.y + half_size.y,
+		b.position.y + b.size.y - half_size.y
+	)
+
 # ── Public Methods ────────────────────────────────────────
 
-## Call this to open the parry input window.
-## Player will now emit signals when keys are pressed.
+## Opens the parry input window. Player will now emit signals when keys are pressed.
 func enable_parry_input() -> void:
 	_accepting_input = true
 
 
-## Call this to close the parry input window.
-## Player will ignore all parry keys after this.
+## Closes the parry input window. Player ignores all parry keys after this.
 func disable_parry_input() -> void:
 	_accepting_input = false
 
@@ -50,7 +103,7 @@ func take_damage(amount: float, is_chip: bool = false) -> void:
 
 	var actual := amount
 	if is_chip:
-		actual *= BuildManager.get_chip_multiplier()   # iron_skin applies here
+		actual *= BuildManager.get_chip_multiplier()
 
 	current_hp -= actual
 	current_hp  = maxf(current_hp, 0.0)
@@ -67,7 +120,7 @@ func get_hp_ratio() -> float:
 	return current_hp / float(GameConstants.PLAYER_MAX_HP)
 
 
-# ── Input ──────────────────────────────────────────────────
+# ── Parry Input ───────────────────────────────────────────
 func _unhandled_input(event: InputEvent) -> void:
 	if not _accepting_input or is_dead:
 		return
@@ -90,32 +143,23 @@ func _unhandled_input(event: InputEvent) -> void:
 # ── Private Methods ───────────────────────────────────────
 
 ## Flash the player red briefly to signal a hit.
-## Uses a Tween so it doesn't block anything else.
 func _flash_hit() -> void:
 	var tween := create_tween()
-	tween.tween_property(_visual, "color", Color.RED, 0.05)
+	tween.tween_property(_visual, "color", Color.RED,              0.05)
 	tween.tween_property(_visual, "color", Color(0.29, 0.62, 1.0), 0.15)
-	# Returns to the original blue #4A9EFF after the flash
 
 
 func _on_death() -> void:
 	is_dead = true
-	_visual.color = Color(0.3, 0.3, 0.3)   # grey out on death
+	_visual.color = Color(0.3, 0.3, 0.3)
 	player_died.emit()
 
 
 ## Fully resets the player for a new run.
-## Called by Arena when restarting.
 func reset() -> void:
 	current_hp = GameConstants.PLAYER_MAX_HP
-	BuildManager.current_hp = current_hp   # sync to build manager
+	BuildManager.current_hp = current_hp
 	is_dead    = false
-	_visual.color = Color(0.29, 0.62, 1.0)   # back to original blue
+	_visual.color = Color(0.29, 0.62, 1.0)
 	disable_parry_input()
-	hp_changed.emit(current_hp)              # update HUD immediately
-
-
-# ── Lifecycle ─────────────────────────────────────────────
-func _ready() -> void:
-	# Restore HP from BuildManager so damage carries between fights
-	current_hp = BuildManager.current_hp
+	hp_changed.emit(current_hp)

@@ -12,6 +12,9 @@ extends Node
 const PLAYER_MAX_HP          : int   = 6      # total health segments per run
 const CHIP_DAMAGE            : float = 0.25   # HP lost on chip block (wrong timing)
 const FULL_HIT_DAMAGE        : float = 1.0    # HP lost on full hit (wrong direction)
+const PLAYER_MOVE_SPEED      : float = 320.0  # pixels per second, WASD movement
+const ARENA_BOUNDS : Rect2 = Rect2(160.0, 90.0, 1600.0, 900.0)
+const PLAYER_BOUNDS_PADDING  : float = 40.0   # pixels from screen edge player can't cross
 
 
 # ── Parry System ──────────────────────────────────────────
