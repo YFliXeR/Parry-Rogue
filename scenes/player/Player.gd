@@ -28,6 +28,11 @@ var is_dead          : bool  = false
 var _accepting_input : bool  = false   # true only during an active parry window
 
 
+# ── Combat ───────────────────────────────────────────────
+@export var attack_damage : float = 1.0
+@export var attack_range  : float = 140.0
+
+
 # ── Node References ───────────────────────────────────────
 @onready var _visual : ColorRect = $Visual   # the blue rectangle
 
@@ -42,6 +47,7 @@ func _process(delta: float) -> void:
 	if is_dead:
 		return
 	_handle_movement(delta)
+	_handle_attack()
 
 
 # ── Movement ──────────────────────────────────────────────
@@ -65,22 +71,28 @@ func _handle_movement(delta: float) -> void:
 
 	global_position += dir * GameConstants.PLAYER_MOVE_SPEED * delta
 
-	# Clamp so the VISUAL RECT edges stay inside bounds, not just the origin.
-	# ColorRect origin is top-left, so we subtract the full size on the far edges.
-	var b  := GameConstants.ARENA_BOUNDS
-	var half_size = _visual.size / 2.0
 
-	global_position.x = clamp(
-		global_position.x,
-		b.position.x + half_size.x,
-		b.position.x + b.size.x - half_size.x
-	)
+# ── Combat ───────────────────────────────────────────────
 
-	global_position.y = clamp(
-		global_position.y,
-		b.position.y + half_size.y,
-		b.position.y + b.size.y - half_size.y
-	)
+## TEMP debug attack.
+## Damages all enemies near the player when pressing Space.
+func _handle_attack() -> void:
+	if not Input.is_action_just_pressed("ui_accept"):
+		return
+
+	# Find every enemy currently in the scene.
+	var enemies = get_tree().get_nodes_in_group("enemy")
+
+	for enemy in enemies:
+		if enemy == null:
+			continue
+
+		# Check distance from player.
+		var dist := global_position.distance_to(enemy.global_position)
+
+		if dist <= attack_range:
+			enemy.take_damage(attack_damage)
+
 
 # ── Public Methods ────────────────────────────────────────
 

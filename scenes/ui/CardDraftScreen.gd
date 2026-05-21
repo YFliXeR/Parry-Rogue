@@ -7,7 +7,7 @@
 # Emits card_selected(card_id) when the player clicks a card.
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-extends Node2D
+extends Control
 
 
 # ── Signals ───────────────────────────────────────────────

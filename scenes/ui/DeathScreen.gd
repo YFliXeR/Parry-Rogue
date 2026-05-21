@@ -8,7 +8,7 @@
 # Call hide_screen() on restart.
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-extends Node2D
+extends Control
 
 
 # ── Colors ────────────────────────────────────────────────

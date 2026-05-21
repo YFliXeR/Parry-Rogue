@@ -5,6 +5,8 @@
 [ext_resource type="Script" uid="uid://c7o1e7o0pnbg" path="res://systems/ParrySystem.gd" id="3_etbs0"]
 [ext_resource type="Script" uid="uid://lmhixifsgkrq" path="res://scenes/bosses/Boss.gd" id="3_faeup"]
 [ext_resource type="Script" uid="uid://wh2dgvpgj84m" path="res://scenes/ui/SkillCheckUI.gd" id="4_etbs0"]
+[ext_resource type="PackedScene" uid="uid://c2momc4clotp" path="res://scenes/enemies/Enemy.tscn" id="5_cx6kx"]
+[ext_resource type="Script" uid="uid://xgl2iqsqtjml" path="res://systems/EnemySpawner.gd" id="5_ret3i"]
 [ext_resource type="Script" uid="uid://dpyn3ivbjquvo" path="res://scenes/ui/HUD.gd" id="6_e8lwv"]
 [ext_resource type="Script" uid="uid://bicf1m65s312h" path="res://scenes/ui/DeathScreen.gd" id="7_jgfk2"]
 [ext_resource type="Script" uid="uid://dkg8f8r3g0ae7" path="res://scenes/ui/BossHPBar.gd" id="8_lp7lw"]
@@ -23,62 +25,118 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.050980393, 0.039215688, 0.101960786, 1)
 
-[node name="ArenaBounds" type="ColorRect" parent="." unique_id=1835381978]
-offset_left = 160.0
-offset_top = 90.0
-offset_right = 1760.0
-offset_bottom = 990.0
-color = Color(0.101960786, 0.08235294, 0.1882353, 1)
+[node name="ParrySystem" type="Node" parent="." unique_id=1869006122]
+script = ExtResource("3_etbs0")
 
-[node name="Player" type="Node2D" parent="." unique_id=1793555016]
-position = Vector2(960, 820)
+[node name="World" type="Node2D" parent="." unique_id=1362364604]
+
+[node name="ArenaBounds2" type="Node2D" parent="World" unique_id=1311611490]
+
+[node name="Polygon2D" type="Polygon2D" parent="World/ArenaBounds2" unique_id=823332746]
+z_index = -10
+position = Vector2(0, -1)
+color = Color(0.101960786, 0.08235294, 0.1882353, 1)
+polygon = PackedVector2Array(-2000, -2000, 2000, -2000, 2000, 2000, -2000, 2000)
+uv = PackedVector2Array(-505, -18, -302, -19, -302, 79, -505, 79)
+
+[node name="Player" type="Node2D" parent="World" unique_id=1793555016 groups=["player"]]
 script = ExtResource("1_tc5gq")
 
-[node name="Visual" type="ColorRect" parent="Player" unique_id=1531457526]
+[node name="Visual" type="ColorRect" parent="World/Player" unique_id=1531457526]
+z_index = 10
 offset_left = -24.0
 offset_top = -32.0
 offset_right = 24.0
 offset_bottom = 32.0
 color = Color(0.2901961, 0.61960787, 1, 1)
 
-[node name="BossSlot" type="Node2D" parent="." unique_id=1448827894]
-position = Vector2(960, 340)
+[node name="Camera2D" type="Camera2D" parent="World/Player" unique_id=1297610610]
+zoom = Vector2(0.85, 0.85)
+position_smoothing_enabled = true
+
+[node name="BossSlot" type="Node2D" parent="World" unique_id=1448827894]
+position = Vector2(700, 0)
 script = ExtResource("3_faeup")
 
-[node name="Visual" type="ColorRect" parent="BossSlot" unique_id=404260544]
+[node name="Visual" type="ColorRect" parent="World/BossSlot" unique_id=404260544]
+z_index = 10
 offset_left = -90.0
 offset_top = -110.0
 offset_right = 90.0
 offset_bottom = 110.0
 color = Color(0.8, 0.2, 0.2, 1)
 
-[node name="ParrySystem" type="Node" parent="." unique_id=1869006122]
-script = ExtResource("3_etbs0")
+[node name="Enemies" type="Node2D" parent="World" unique_id=1022568366]
 
-[node name="SkillCheckUI" type="Node2D" parent="." unique_id=1090512427]
-position = Vector2(960, 500)
-script = ExtResource("4_etbs0")
+[node name="Projectiles" type="Node2D" parent="World" unique_id=2028993641]
 
-[node name="HUD" type="Node2D" parent="." unique_id=1188375801]
-position = Vector2(960, 980)
+[node name="Effects" type="Node2D" parent="World" unique_id=1009406071]
+
+[node name="EnemySpawner" type="Node2D" parent="World" unique_id=1453022940]
+script = ExtResource("5_ret3i")
+enemy_scene = ExtResource("5_cx6kx")
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=339943247]
+
+[node name="HUD" type="Control" parent="UI" unique_id=2125868364]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("6_e8lwv")
 
-[node name="DeathScreen" type="Node2D" parent="." unique_id=951378537]
+[node name="SkillCheckUI" type="Control" parent="UI" unique_id=1848268577]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("4_etbs0")
+
+[node name="SequenceUI" type="Control" parent="UI" unique_id=1975660243]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("11_2ri42")
+
+[node name="DeathScreen" type="Control" parent="UI" unique_id=1513588370]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("7_jgfk2")
 
-[node name="BossHPBar" type="Node2D" parent="." unique_id=1459038987]
-position = Vector2(960, 175)
-script = ExtResource("8_lp7lw")
-
-[node name="WinScreen" type="Node2D" parent="." unique_id=1637093595]
+[node name="WinScreen" type="Control" parent="UI" unique_id=975042276]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("9_2g53k")
 
-[node name="CardDraftScreen" type="Node2D" parent="." unique_id=78908014]
+[node name="CardDraftScreen" type="Control" parent="UI" unique_id=722270391]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("10_g06lh")
 
-[node name="Camera2D" type="Camera2D" parent="." unique_id=1297610610]
-position = Vector2(960, 540)
-
-[node name="SequenceUI" type="Node2D" parent="." unique_id=558327655]
-position = Vector2(960, 460)
-script = ExtResource("11_2ri42")
+[node name="BossHPBarUI" type="Control" parent="UI" unique_id=189126739]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("8_lp7lw")

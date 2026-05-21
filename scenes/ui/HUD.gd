@@ -7,7 +7,7 @@
 # Call update_hp(current) whenever HP changes.
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-extends Node2D
+extends Control
 
 
 # ── Layout ────────────────────────────────────────────────
@@ -34,15 +34,15 @@ func _ready() -> void:
 # ── Build ─────────────────────────────────────────────────
 func _build_segments() -> void:
 	var count       : int   = GameConstants.PLAYER_MAX_HP
-	var total_width : float = count * SEGMENT_W + (count - 1) * SEGMENT_GAP
-	var start_x     : float = -total_width / 2.0
+	var total_width := GameConstants.PLAYER_MAX_HP * SEGMENT_W + (GameConstants.PLAYER_MAX_HP - 1) * SEGMENT_GAP
+	var start_x : float = (get_viewport_rect().size.x - total_width) / 2.0
 
 	for i in count:
 		var seg      := ColorRect.new()
 		seg.size      = Vector2(SEGMENT_W, SEGMENT_H)
 		seg.position  = Vector2(
 			start_x + i * (SEGMENT_W + SEGMENT_GAP),
-			-SEGMENT_H / 2.0
+			get_viewport_rect().size.y - 60.0
 		)
 		seg.color = COLOR_FULL
 		add_child(seg)

@@ -10,7 +10,7 @@
 #   hide_sequence()
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-extends Node2D
+extends Control
 
 
 # ── Visual Constants ──────────────────────────────────────
@@ -86,6 +86,7 @@ func hide_sequence() -> void:
 func _draw() -> void:
 	if not visible or _sequence.is_empty():
 		return
+	var center := size / 2.0
 
 	var font      := ThemeDB.fallback_font
 	var count     := _sequence.size()
@@ -96,7 +97,7 @@ func _draw() -> void:
 	# Draw each arrow slot
 	for i in count:
 		var cx := start_x + i * slot_w
-		var pos := Vector2(cx, 0.0)
+		var pos := center + Vector2(cx, 0.0)
 
 		var bg_color   : Color
 		var txt_color  : Color
@@ -124,8 +125,8 @@ func _draw() -> void:
 					arrow, HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE, txt_color)
 
 	# Timer bar below the arrows
-	var bar_x := -BAR_W / 2.0
-	var bar_y := ARROW_RADIUS + 14.0
+	var bar_x := center.x - BAR_W / 2.0
+	var bar_y := center.y + ARROW_RADIUS + 14.0
 	draw_rect(Rect2(bar_x, bar_y, BAR_W, BAR_H), Color(0.12, 0.10, 0.18))
 	var remaining := (1.0 - _progress) * BAR_W
 	if remaining > 0.0:

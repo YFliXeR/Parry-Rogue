@@ -44,7 +44,7 @@ func get_node_type(row: int, col: int) -> String:
 func get_node_state(row: int, col: int) -> String:
 	if row < current_row:
 		# Past row — show as completed only if it was on the chosen path
-		if row < path.size() and path[row] == col:
+		if row >= 0 and row < path.size() and path[row] == col:
 			return "completed"
 		return "locked"
 
@@ -56,7 +56,10 @@ func get_node_state(row: int, col: int) -> String:
 		return "available"   # first row: all nodes are open
 
 	# Check connection from the previous row's chosen column
-	var prev_col     : int  = path[current_row - 1]
+	var prev_col : int = 0
+
+	if current_row - 1 >= 0 and current_row - 1 < path.size():
+		prev_col = path[current_row - 1]
 	var next_row_len : int  = MAP_LAYOUT[row].size()
 
 	# Boss row (single node) is always reachable

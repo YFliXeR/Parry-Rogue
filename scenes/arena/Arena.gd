@@ -11,17 +11,17 @@
 extends Node2D
 
 # ── Node References ───────────────────────────────────────
-@onready var _player       : Node2D = $Player
+@onready var _player       : Node2D = $World/Player
 @onready var _parry_system : Node   = $ParrySystem
-@onready var _skill_check_ui : Node2D = $SkillCheckUI
-@onready var _boss_slot : Node2D = $BossSlot
-@onready var _boss : Node2D = $BossSlot
-@onready var _hud : Node2D = $HUD
-@onready var _death_screen : Node2D = $DeathScreen
-@onready var _boss_hp_bar : Node2D = $BossHPBar
-@onready var _card_draft : Node2D = $CardDraftScreen
-@onready var _camera : Camera2D = $Camera2D
-@onready var _sequence_ui : Node2D = $SequenceUI
+@onready var _skill_check_ui : Control = $UI/SkillCheckUI
+@onready var _boss_slot : Node2D = $World/BossSlot
+@onready var _boss : Node2D = $World/BossSlot
+@onready var _hud : Control = $UI/HUD
+@onready var _death_screen : Control = $UI/DeathScreen
+@onready var _boss_hp_bar : Control = $UI/BossHPBarUI
+@onready var _card_draft : Control = $UI/CardDraftScreen
+@onready var _camera : Camera2D = $World/Player/Camera2D
+@onready var _sequence_ui : Control = $UI/SequenceUI
 
 
 # ── Screen Shake State ────────────────────────────────────
@@ -277,7 +277,7 @@ func _on_card_selected(card_id: String) -> void:
 func _create_fight_label() -> void:
 	_fight_label      = Label.new()
 	_fight_label.size = Vector2(400.0, 40.0)
-	_fight_label.position = Vector2(20.0, 20.0)
+	_fight_label.position = Vector2(860.0, 80.0)
 	_fight_label.add_theme_font_size_override("font_size", 18)
 	_fight_label.add_theme_color_override("font_color", Color(0.60, 0.50, 0.80))
 	add_child(_fight_label)

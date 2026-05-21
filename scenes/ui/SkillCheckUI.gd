@@ -7,7 +7,7 @@
 # Call hide_check() when it closes.
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-extends Node2D
+extends Control
 
 
 # ── Visual Constants ──────────────────────────────────────
@@ -68,11 +68,12 @@ func hide_check() -> void:
 
 # ── Drawing ───────────────────────────────────────────────
 func _draw() -> void:
+	var center := size / 2.0
 	if not _active:
 		return
 
 	# 1. Background ring — full dark circle ───────────────
-	draw_arc(Vector2.ZERO, RADIUS, 0.0, TAU, 80, COLOR_RING, THICKNESS, true)
+	draw_arc(center, RADIUS, 0.0, TAU, 80, COLOR_RING, THICKNESS, true)
 
 	# 2. Success zone — green arc ─────────────────────────
 	# Zone sits between SUCCESS_START% and SUCCESS_END% of the full sweep.
@@ -80,13 +81,13 @@ func _draw() -> void:
 	# Green zone grows wider when wide_guard cards are active
 	var zone_s := -PI / 2.0 + GameConstants.PARRY_SUCCESS_START * TAU
 	var zone_e := -PI / 2.0 + (GameConstants.PARRY_SUCCESS_END + BuildManager.get_parry_window_bonus()) * TAU	
-	draw_arc(Vector2.ZERO, RADIUS, zone_s, zone_e, 32, COLOR_ZONE, THICKNESS + 4.0, true)
+	draw_arc(center, RADIUS, zone_s, zone_e, 32, COLOR_ZONE, THICKNESS + 4.0, true)
 
 	# 3. Rotating needle ───────────────────────────────────
 	var angle      := -PI / 2.0 + _progress * TAU
 	var needle_tip := Vector2(cos(angle), sin(angle)) * RADIUS
-	draw_line(Vector2.ZERO, needle_tip, COLOR_NEEDLE, NEEDLE_WIDTH, true)
-	draw_circle(needle_tip, DOT_RADIUS, COLOR_NEEDLE)
+	draw_line(center, center + needle_tip, COLOR_NEEDLE, NEEDLE_WIDTH, true)
+	draw_circle(center + needle_tip, DOT_RADIUS, COLOR_NEEDLE)
 
 	# 4. Direction arrow in center ─────────────────────────
 	var arrow : String = "?"
@@ -98,7 +99,7 @@ func _draw() -> void:
 
 	var font      := ThemeDB.fallback_font
 	var txt_size  := font.get_string_size(arrow, HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE)
-	var txt_pos   := Vector2(-txt_size.x / 2.0, txt_size.y / 4.0)
+	var txt_pos   := center + Vector2(-txt_size.x / 2.0, txt_size.y / 4.0)
 	draw_string(font, txt_pos, arrow, HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE, COLOR_ARROW)
 
 
