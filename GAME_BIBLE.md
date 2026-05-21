@@ -36,6 +36,13 @@ Godot 4.6.2, GDScript, Forward+ renderer, 1920x1080 canvas_items stretch
 - systems/CounterProjectile.gd — projectile fired on perfect parry
 - systems/ImpactRing.gd — expanding ring visual on counter hit
 - constants/GameConstants.gd — all numbers
+- scenes/enemies/Enemy.tscn + Enemy.gd — reusable wave-combat enemy base
+- systems/EnemySpawner.gd — spawns enemies around player arena
+
+## Groups
+## Global groups:
+- player
+- enemy
 
 ## Map Structure
 MAP_LAYOUT in RunManager:
@@ -73,12 +80,32 @@ PLAYER_MAX_HP=6 segments, persists between fights via BuildManager.current_hp
 CHIP_DAMAGE=0.25 * iron_skin_multiplier, FULL_HIT=1.0
 
 ## Current State
-Phase 7 complete. 12 cards, 6 enemy types, 2 minigames, 
-full run structure (map→fight→draft→map), shop/events working.
+Phase 8 foundation complete. Arena/UI architecture refactored into scalable wave-combat foundation.
+
+Current systems working:
+
+map→fight→draft→map loop
+shops/events/cards
+boss combat
+parry system
+skill check + sequence minigames
+scalable arena movement
+enemy spawning/chasing
+enemy contact damage
+enemy HP/death
+temporary player combat loop
 
 ## NEXT OBJECTIVE
-Rebuild arena combat into wave survival format:
-- Player moves with WASD in arena (no gravity, top-down)
+Expand into full wave-combat roguelite:
+- enemy attack cadence
+- enemy separation/steering
+- WaveManager system
+- multiple enemy archetypes
+- combat feel polish
+- replace temporary player attack system
+- XP/build progression
+- elite rounds
+- boss waves
 - Enemies spawn at arena edges, move toward player
 - Regular projectiles: dodge by moving
 - Highlighted projectiles: trigger existing skill check system
