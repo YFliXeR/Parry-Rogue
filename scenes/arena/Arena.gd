@@ -22,6 +22,7 @@ extends Node2D
 @onready var _card_draft : Control = $UI/CardDraftScreen
 @onready var _camera : Camera2D = $World/Player/Camera2D
 @onready var _sequence_ui : Control = $UI/SequenceUI
+@onready var _wave_manager = $WaveManager
 
 
 # ── Screen Shake State ────────────────────────────────────
@@ -42,38 +43,40 @@ var _surge_used       : bool = false  # first parry used (arcane_surge)
 # ── Lifecycle ─────────────────────────────────────────────
 func _ready() -> void:
 	# Wire ParrySystem to Player
-	_parry_system.setup(_player)
+#	_parry_system.setup(_player)
 
 	# Connect parry outcomes
-	_parry_system.parry_perfect.connect(_on_parry_perfect)
-	_parry_system.parry_chip.connect(_on_parry_chip)
-	_parry_system.parry_failed.connect(_on_parry_failed)
+#	_parry_system.parry_perfect.connect(_on_parry_perfect)
+#	_parry_system.parry_chip.connect(_on_parry_chip)
+#	_parry_system.parry_failed.connect(_on_parry_failed)
 
 	# Connect skill check UI
-	_parry_system.window_opened.connect(_on_window_opened)
-	_parry_system.window_closed.connect(_on_window_closed)
+#	_parry_system.window_opened.connect(_on_window_opened)
+#	_parry_system.window_closed.connect(_on_window_closed)
+
+	_wave_manager.start_run()
 
 	# Connect player signals
 	_player.player_died.connect(_on_player_died)
 	_player.hp_changed.connect(_hud.update_hp)
 
 	# Connect boss signals
-	_boss.attack_fired.connect(_on_boss_attack)
-	_boss.hp_changed.connect(_boss_hp_bar.update_hp)
-	_boss.boss_died.connect(_on_boss_died)
+#	_boss.attack_fired.connect(_on_boss_attack)
+#	_boss.hp_changed.connect(_boss_hp_bar.update_hp)
+#	_boss.boss_died.connect(_on_boss_died)
 
 	# Connect card draft
 	_card_draft.card_selected.connect(_on_card_selected)
 
 	# Connect sequence input feedback to the sequence UI
-	_parry_system.sequence_input_received.connect(_sequence_ui.register_input)
+#	_parry_system.sequence_input_received.connect(_sequence_ui.register_input)
 
 	# Connect win/death screens to R key handler
 	# (handled in _unhandled_input below)
 
 	# Configure and start this fight based on RunManager state
 	_create_fight_label()
-	_configure_fight()
+#	_configure_fight()
 
 
 func _configure_fight() -> void:
@@ -139,10 +142,7 @@ func _on_parry_failed() -> void:
 # ── Player Death ──────────────────────────────────────────
 func _on_player_died() -> void:
 	print("PLAYER DIED")
-	_boss.stop()
-	_parry_system.reset()
 	_death_screen.show_screen()
-
 
 func _on_window_opened(direction: String, minigame_type: String) -> void:
 	_skill_check_ui.show_check(direction, minigame_type)	

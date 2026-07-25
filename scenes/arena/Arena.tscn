@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://cins83i2pteda" path="res://scenes/player/Player.gd" id="1_tc5gq"]
 [ext_resource type="Script" uid="uid://c7o1e7o0pnbg" path="res://systems/ParrySystem.gd" id="3_etbs0"]
 [ext_resource type="Script" uid="uid://lmhixifsgkrq" path="res://scenes/bosses/Boss.gd" id="3_faeup"]
+[ext_resource type="Script" uid="uid://c3uni4litwmkq" path="res://systems/WaveManager.gd" id="3_orpgv"]
 [ext_resource type="Script" uid="uid://wh2dgvpgj84m" path="res://scenes/ui/SkillCheckUI.gd" id="4_etbs0"]
 [ext_resource type="PackedScene" uid="uid://c2momc4clotp" path="res://scenes/enemies/Enemy.tscn" id="5_cx6kx"]
 [ext_resource type="Script" uid="uid://xgl2iqsqtjml" path="res://systems/EnemySpawner.gd" id="5_ret3i"]
@@ -27,6 +28,9 @@ color = Color(0.050980393, 0.039215688, 0.101960786, 1)
 
 [node name="ParrySystem" type="Node" parent="." unique_id=1869006122]
 script = ExtResource("3_etbs0")
+
+[node name="WaveManager" type="Node" parent="." unique_id=1828964455]
+script = ExtResource("3_orpgv")
 
 [node name="World" type="Node2D" parent="." unique_id=1362364604]
 
@@ -74,7 +78,7 @@ color = Color(0.8, 0.2, 0.2, 1)
 
 [node name="EnemySpawner" type="Node2D" parent="World" unique_id=1453022940]
 script = ExtResource("5_ret3i")
-enemy_scene = ExtResource("5_cx6kx")
+melee_enemy_scene = ExtResource("5_cx6kx")
 
 [node name="UI" type="CanvasLayer" parent="." unique_id=339943247]
 
@@ -133,6 +137,7 @@ grow_vertical = 2
 script = ExtResource("10_g06lh")
 
 [node name="BossHPBarUI" type="Control" parent="UI" unique_id=189126739]
+visible = false
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0

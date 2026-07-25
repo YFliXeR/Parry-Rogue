@@ -32,6 +32,8 @@ var _accepting_input : bool  = false   # true only during an active parry window
 @export var attack_damage : float = 1.0
 @export var attack_range  : float = 140.0
 
+@export var arena_min := Vector2(-2000, -2000)
+@export var arena_max := Vector2(2000, 2000)
 
 # ── Node References ───────────────────────────────────────
 @onready var _visual : ColorRect = $Visual   # the blue rectangle
@@ -70,6 +72,8 @@ func _handle_movement(delta: float) -> void:
 		dir = dir.normalized()
 
 	global_position += dir * GameConstants.PLAYER_MOVE_SPEED * delta
+	global_position.x = clamp(global_position.x, arena_min.x, arena_max.x)
+	global_position.y = clamp(global_position.y, arena_min.y, arena_max.y)
 
 
 # ── Combat ───────────────────────────────────────────────

@@ -17,7 +17,7 @@ extends Node2D
 
 
 # ── Enemy Scene ──────────────────────────────────────────
-@export var enemy_scene : PackedScene
+@export var melee_enemy_scene : PackedScene
 
 
 # ── References ───────────────────────────────────────────
@@ -25,22 +25,14 @@ extends Node2D
 @onready var _enemies : Node2D = $"../Enemies"
 
 
-# ── Lifecycle ────────────────────────────────────────────
-func _ready() -> void:
-	# TEMP: Spawn a few enemies immediately on arena start.
-	# Later this will be handled by WaveManager.
-	for i in 3:
-		_spawn_enemy()
-
-
 # ── Spawning ─────────────────────────────────────────────
 
 ## Creates one enemy somewhere around the player.
-func _spawn_enemy() -> void:
-	if enemy_scene == null:
+func spawn_enemy() -> void:
+	if melee_enemy_scene == null:
 		return
 
-	var enemy = enemy_scene.instantiate()
+	var enemy = melee_enemy_scene.instantiate()
 
 	# Spawn enemies around the player at random angles.
 	var angle    := randf() * TAU
@@ -54,3 +46,13 @@ func _spawn_enemy() -> void:
 	enemy.global_position = spawn_pos
 
 	_enemies.add_child(enemy)
+
+	var wave_manager = get_node("../../WaveManager")
+
+	if wave_manager:
+		enemy.died.connect(wave_manager.enemy_killed)
+
+
+func spawn_wave(enemy_count: int) -> void:
+	for i in enemy_count:
+		spawn_enemy()
